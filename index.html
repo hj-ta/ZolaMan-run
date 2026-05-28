@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STICKMAN RUN</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --game-bg:#14140f; --game-fg:#f4f4ef; --acid:#d4ff3f; --acid-dim:#9aba2e; --muted:#8b8b7a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; background: var(--game-bg); color: var(--game-fg);
+    font-family: 'Space Grotesk', ui-monospace, monospace; overflow: hidden; user-select: none; }
+  .page { position: relative; width: 100%; height: 100vh; }
+
+  #scoreboard { position: absolute; top: 22px; left: 24px; font-size: 12px;
+    color: var(--acid); opacity: 0; transition: opacity .4s; z-index: 40; letter-spacing: .04em; }
+  #scoreboard b { color: var(--game-fg); font-weight: 700; }
+
+  #stage { position: absolute; inset: 0; z-index: 15; }
+  .ground { position: absolute; bottom: 58px; left: 0; right: 0; height: 1px; background: #2e2e22; z-index: 1; }
+
+  .toast { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    font-size: 13px; color: var(--muted); opacity: 0; transition: opacity .4s; z-index: 5; }
+
+  .event { position: absolute; top: 32%; left: 50%; transform: translate(-50%,-50%) scale(.8);
+    font-weight: 700; font-size: clamp(28px,7vw,56px); color: var(--acid); opacity: 0;
+    pointer-events: none; z-index: 45; text-align: center;
+    text-shadow: 0 0 24px rgba(212,255,63,.4); letter-spacing: -0.02em; }
+  .event.pop { animation: pop 1.4s ease forwards; }
+  @keyframes pop {
+    0% { opacity: 0; transform: translate(-50%,-50%) scale(.7); }
+    15% { opacity: 1; transform: translate(-50%,-50%) scale(1.05); }
+    75% { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+    100% { opacity: 0; transform: translate(-50%,-50%) scale(1); }
+  }
+  .event small { display:block; font-size: 15px; color: var(--game-fg); font-weight: 400; margin-top: 8px; letter-spacing: 0; }
+
+  @keyframes quake { 0%,100%{ transform: translate(0,0);} 25%{ transform: translate(-8px,4px);} 50%{ transform: translate(6px,-5px);} 75%{ transform: translate(-4px,-3px);} }
+  body.quake .page { animation: quake .12s infinite; }
+
+  /* 시작 화면 */
+  .start { position: absolute; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; text-align: center; z-index: 30;
+    transition: opacity .5s; }
+  .start.hide { opacity: 0; pointer-events: none; }
+  #idleCanvas { cursor: pointer; }
+  .cue { position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%);
+    font-size: 11px; letter-spacing: .3em; color: #3a3a2e; text-transform: uppercase;
+    animation: blink 1.8s ease-in-out infinite; }
+  @keyframes blink { 0%,100%{ opacity: .15; } 50%{ opacity: .5; } }
+</style>
+</head>
+<body>
+<div class="page" id="page">
+
+  <div id="scoreboard">SCORE <b id="score">0</b> · BEST <b id="best">0</b></div>
+
+  <div class="ground"></div>
+  <div id="stage"></div>
+  <div class="toast" id="toast"></div>
+  <div class="event" id="event"></div>
+
+  <div class="start" id="start">
+    <canvas id="idleCanvas" width="120" height="120"></canvas>
+    <div class="cue">space</div>
+  </div>
+
+</div>
+
+<script>
+const page = document.getElementById('page');
+const stage = document.getElementById('stage');
+const toast = document.getElementById('toast');
+const scoreboard = document.getElementById('scoreboard');
+const scoreEl = document.getElementById('score');
+const bestEl = document.getElementById('best');
+const eventEl = document.getElementById('event');
+const startScreen = document.getElementById('start');
+
+let score = 0, best = 0;
+let ctx, cv, raf;
+let players, obstacles, speed, frame, holding, playing = false;
+let gravityDir = 1, scale = 1, reverse = false, nextEventScore = 6, fakeOverArmed = true;
+let W, H, GROUND;
+const BASE_G = 0.7, JUMP_V = -11.5;
+
+function initGame() {
+  if (playing) return;
+  startScreen.classList.add('hide');
+
+  cv = document.createElement('canvas');
+  W = window.innerWidth; H = window.innerHeight;
+  cv.width = W; cv.height = H;
+  cv.style.cssText = 'position:absolute;inset:0;z-index:15;';
+  stage.innerHTML = ''; stage.appendChild(cv);
+  ctx = cv.getContext('2d');
+  GROUND = H - 58;
+
+  players = [{ x: W*0.18, y: GROUND, vy: 0, onGround: true }];
+  obstacles = []; speed = 5; frame = 0; score = 0;
+  gravityDir = 1; scale = 1; reverse = false; nextEventScore = 6; fakeOverArmed = true;
+  scoreboard.style.opacity = '1'; scoreEl.textContent = '0';
+  playing = true;
+  loop();
+}
+
+function jump() {
+  if (!playing) return;
+  players.forEach(p => { if (p.onGround) { p.vy = JUMP_V * gravityDir; p.onGround = false; } });
+  holding = true;
+}
+function releaseJump() { holding = false; players.forEach(p => { if (p.vy*gravityDir < -5) p.vy = -5*gravityDir; }); }
+
+function spawn() {
+  const h = (24 + Math.random()*30) * scale;
+  obstacles.push({ x: reverse ? -40 : W + 20, w: 12*Math.min(scale,2), h, scored:false });
+}
+
+function banner(big, small) {
+  eventEl.innerHTML = big + (small ? '<small>'+small+'</small>' : '');
+  eventEl.classList.remove('pop'); void eventEl.offsetWidth; eventEl.classList.add('pop');
+}
+
+function triggerEvent() {
+  const pool = ['giant','gravity','clone','reverse','quake','speedfake'];
+  const ev = pool[Math.floor(Math.random()*pool.length)];
+  if (ev === 'giant') {
+    scale = 2.2; banner('거인 등장', '점프력 테스트입니다');
+    setTimeout(()=>{ scale = 1; }, 6000);
+  } else if (ev === 'gravity') {
+    gravityDir *= -1; banner(gravityDir<0 ? '중력 반전' : '중력 복구', gravityDir<0 ? '천장으로 점프하세요' : '');
+  } else if (ev === 'clone') {
+    const base = players[0];
+    players.push({ x: base.x-46, y: GROUND, vy:0, onGround:true });
+    if (players.length<4) players.push({ x: base.x+46, y: GROUND, vy:0, onGround:true });
+    banner('졸라맨 증식', '다 같이 살아남으세요');
+  } else if (ev === 'reverse') {
+    reverse = true; banner('역주행', '뒤에서 옵니다');
+    setTimeout(()=>{ reverse = false; }, 6500);
+  } else if (ev === 'quake') {
+    document.body.classList.add('quake'); banner('지진 발생', '집중하세요');
+    setTimeout(()=>document.body.classList.remove('quake'), 2500);
+  } else if (ev === 'speedfake') {
+    const old = speed; speed = 2; banner('...어라?', '느려졌네요');
+    setTimeout(()=>{ speed = old + 3; banner('방심했죠', ''); }, 1800);
+  }
+}
+
+function stick(p) {
+  ctx.save(); ctx.translate(p.x, p.y); if (gravityDir<0) ctx.scale(1,-1);
+  ctx.strokeStyle = '#f4f4ef'; ctx.lineWidth = 2.5; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.arc(0,-40,7,0,7); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(0,-33); ctx.lineTo(0,-14); ctx.stroke();
+  const sw = p.onGround ? Math.sin(frame*0.4)*7 : 6;
+  ctx.beginPath(); ctx.moveTo(0,-14); ctx.lineTo(-6,-2+sw/2); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(0,-14); ctx.lineTo(6,-2-sw/2); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(0,-29); ctx.lineTo(-8,-20+sw/3); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(0,-29); ctx.lineTo(8,-20-sw/3); ctx.stroke();
+  ctx.restore();
+}
+
+function loop() {
+  ctx.clearRect(0,0,W,H);
+  if (playing) {
+    frame++;
+    const G = BASE_G;
+    players.forEach(p => {
+      if (holding && p.vy*gravityDir < 0) p.vy += G*0.45*gravityDir; else p.vy += G*gravityDir;
+      p.y += p.vy;
+      if (gravityDir>0 && p.y >= GROUND) { p.y = GROUND; p.vy = 0; p.onGround = true; }
+      if (gravityDir<0 && p.y <= 90) { p.y = 90; p.vy = 0; p.onGround = true; }
+    });
+
+    if (frame % Math.max(46, 92 - Math.floor(score/5)) === 0) spawn();
+
+    if (score >= nextEventScore) {
+      if (fakeOverArmed && score >= 14 && Math.random()<0.4) { fakeGameOver(); }
+      else triggerEvent();
+      nextEventScore = score + 8 + Math.floor(Math.random()*6);
+    }
+
+    ctx.fillStyle = '#d4ff3f';
+    for (let i = obstacles.length-1; i>=0; i--) {
+      const o = obstacles[i];
+      o.x += reverse ? speed : -speed;
+      const oy = gravityDir>0 ? GROUND - o.h : 90;
+      ctx.fillRect(o.x, oy, o.w, o.h);
+
+      players.forEach(p => {
+        const px = p.x-8, pw = 16, py = p.y-47, ph = 47;
+        const obTop = gravityDir>0 ? GROUND-o.h : 90;
+        const obBot = gravityDir>0 ? GROUND : 90+o.h;
+        if (px < o.x+o.w && px+pw > o.x && py+ph > obTop && py < obBot) { gameOver(); }
+      });
+
+      const gone = reverse ? o.x > W+40 : o.x+o.w < 0;
+      if (gone) { obstacles.splice(i,1); }
+      else if (!o.scored && ((!reverse && o.x+o.w < players[0].x-8) || (reverse && o.x > players[0].x+8))) {
+        o.scored = true; score++; scoreEl.textContent = score;
+        if (score % 10 === 0) speed += 0.5;
+      }
+    }
+  }
+  players.forEach(stick);
+  raf = requestAnimationFrame(loop);
+}
+
+function fakeGameOver() {
+  fakeOverArmed = false;
+  const realPlaying = playing;
+  playing = false;
+  ctx.fillStyle = 'rgba(20,20,15,.8)'; ctx.fillRect(0,0,W,H);
+  ctx.fillStyle = '#d4ff3f'; ctx.textAlign='center';
+  ctx.font = "700 38px 'Space Grotesk', monospace";
+  ctx.fillText('GAME OVER', W/2, H/2);
+  setTimeout(() => { banner('...라고 할 뻔', '계속하세요'); playing = realPlaying; loop(); }, 700);
+}
+
+function gameOver() {
+  playing = false; cancelAnimationFrame(raf);
+  document.body.classList.remove('quake');
+  best = Math.max(best, score); bestEl.textContent = best;
+  ctx.fillStyle = 'rgba(20,20,15,.9)'; ctx.fillRect(0,0,W,H);
+  ctx.textAlign='center';
+  ctx.fillStyle = '#d4ff3f'; ctx.font = "700 30px 'Space Grotesk', monospace";
+  const newBest = score >= best && score>0;
+  ctx.fillText(newBest ? 'NEW BEST · '+score : 'SCORE · '+score, W/2, H/2-12);
+  ctx.fillStyle = '#8b8b7a'; ctx.font = "14px 'Space Grotesk', monospace";
+  const lines = ['그래서요?','이게 끝이에요?','한 번 더?','졸라맨이 실망했어요','space / click 으로 다시'];
+  ctx.fillText(lines[Math.min(Math.floor(score/10), lines.length-1)] || 'space / click 으로 다시', W/2, H/2+18);
+  setTimeout(() => {
+    document.addEventListener('keydown', restartOnce);
+    cv.addEventListener('mousedown', restartOnce);
+  }, 500);
+}
+function restartOnce(e){
+  if (e.type==='keydown' && e.code!=='Space') return;
+  document.removeEventListener('keydown', restartOnce);
+  cv.removeEventListener('mousedown', restartOnce);
+  playing=false; initGame();
+}
+
+/* 시작 화면: 가만히 서서 까딱거리는 졸라맨 */
+const idle = document.getElementById('idleCanvas');
+const ictx = idle.getContext('2d');
+let idleRaf, idleFrame = 0;
+function drawIdle() {
+  ictx.clearRect(0,0,120,120);
+  const bob = Math.sin(idleFrame*0.06) * 2;
+  ictx.save(); ictx.translate(60, 78 + bob);
+  ictx.strokeStyle = '#f4f4ef'; ictx.lineWidth = 3; ictx.lineCap = 'round';
+  ictx.beginPath(); ictx.arc(0,-40,8,0,7); ictx.stroke();
+  ictx.beginPath(); ictx.moveTo(0,-32); ictx.lineTo(0,-12); ictx.stroke();
+  ictx.beginPath(); ictx.moveTo(0,-12); ictx.lineTo(-7,4); ictx.stroke();
+  ictx.beginPath(); ictx.moveTo(0,-12); ictx.lineTo(7,4); ictx.stroke();
+  const arm = Math.sin(idleFrame*0.06) * 3;
+  ictx.beginPath(); ictx.moveTo(0,-27); ictx.lineTo(-9,-16+arm); ictx.stroke();
+  ictx.beginPath(); ictx.moveTo(0,-27); ictx.lineTo(9,-16-arm); ictx.stroke();
+  ictx.restore();
+  idleFrame++;
+  idleRaf = requestAnimationFrame(drawIdle);
+}
+drawIdle();
+
+/* 입력 */
+idle.addEventListener('click', () => { cancelAnimationFrame(idleRaf); initGame(); });
+document.addEventListener('keydown', e=>{
+  if (e.code !== 'Space') return; e.preventDefault();
+  if (!playing && !startScreen.classList.contains('hide')) { cancelAnimationFrame(idleRaf); initGame(); return; }
+  jump();
+});
+document.addEventListener('keyup', e=>{ if(e.code==='Space') releaseJump(); });
+document.addEventListener('mousedown', ()=>{ if(playing) jump(); });
+document.addEventListener('mouseup', releaseJump);
+document.addEventListener('touchstart', e=>{
+  if (playing) { e.preventDefault(); jump(); }
+}, {passive:false});
+document.addEventListener('touchend', releaseJump);
+</script>
+</body>
+</html>
