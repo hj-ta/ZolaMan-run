@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="680" height="380" viewBox="0 0 680 380" font-family="ui-monospace,'JetBrains Mono','Fira Code',monospace">
+<style>
+  .line { opacity: 0; animation: appear .01s forwards; }
+  .l01 { animation-delay: .2s; }
+  .l02 { animation-delay: .5s; }
+  .l03 { animation-delay: .8s; }
+  .l04 { animation-delay: 1.1s; }
+  .l05 { animation-delay: 1.4s; }
+  .l06 { animation-delay: 1.7s; }
+  .l07 { animation-delay: 2.0s; }
+  .l08 { animation-delay: 2.3s; }
+  .l09 { animation-delay: 2.6s; }
+  .l10 { animation-delay: 2.9s; }
+  .l11 { animation-delay: 3.2s; }
+  .l12 { animation-delay: 3.5s; }
+  .l13 { animation-delay: 3.8s; }
+  .l14 { animation-delay: 4.1s; }
+  .l15 { animation-delay: 4.4s; }
+  .l16 { animation-delay: 4.7s; }
+  .l17 { animation-delay: 5.0s; }
+  .l18 { animation-delay: 5.3s; }
+  @keyframes appear { to { opacity: 1; } }
+  .cursor { animation: blink .7s step-end infinite; }
+  @keyframes blink { 0%,100%{ opacity:1; } 50%{ opacity:0; } }
+</style>
+
+  <!-- 배경 -->
+  <rect width="680" height="380" rx="12" fill="#14140f"/>
+  <rect x=".5" y=".5" width="679" height="379" rx="12" fill="none" stroke="#1e1e14" stroke-width="1"/>
+
+  <!-- 좌측: 졸라맨 ASCII -->
+  <g font-size="13" font-weight="700" text-anchor="middle" fill="#d4ff3f">
+    <text class="line l01" x="95" y="68">  _____</text>
+    <text class="line l02" x="95" y="84"> / o o \</text>
+    <text class="line l03" x="95" y="100"> \  ^  /</text>
+    <text class="line l04" x="95" y="116">  \___/</text>
+    <text class="line l05" x="95" y="138" fill="#9aba2e"> __|_|__</text>
+    <text class="line l06" x="95" y="154" fill="#9aba2e">/ / | \ \</text>
+    <text class="line l07" x="95" y="170" fill="#f4f4ef"> ' |_| '</text>
+    <text class="line l08" x="95" y="194" fill="#f4f4ef">  /   \</text>
+    <text class="line l09" x="95" y="210" fill="#f4f4ef">_/     \_</text>
+    <text class="line l18" x="95" y="250" fill="#3a3a2e" font-size="11">stickman.os</text>
+  </g>
+
+  <!-- 우측: neofetch 정보 -->
+  <g font-size="13">
+    <!-- 헤더 -->
+    <text class="line l01" x="210" y="56" fill="#d4ff3f" font-weight="700">hojung<tspan fill="#555">@</tspan>github
+      <tspan fill="#2a2a1e"> ──────────────────────</tspan>
+    </text>
+
+    <!-- 시스템 정보 -->
+    <text class="line l02" x="210" y="82"  fill="#9aba2e" font-weight="700">OS<tspan fill="#3a3a2e">:</tspan><tspan fill="#d4ff3f" dx="12">macOS, Ubuntu, 가끔 Win</tspan><tspan fill="#555">(눈물)</tspan></text>
+    <text class="line l03" x="210" y="100" fill="#9aba2e" font-weight="700">Uptime<tspan fill="#3a3a2e">:</tspan><tspan fill="#d4ff3f" dx="12">25 years,</tspan><tspan fill="#555"> 인생 디버깅 중</tspan></text>
+    <text class="line l04" x="210" y="118" fill="#9aba2e" font-weight="700">Host<tspan fill="#3a3a2e">:</tspan><tspan fill="#d4ff3f" dx="12">코딩노예1</tspan><tspan fill="#555"> (입사 대기열)</tspan></text>
+    <text class="line l05" x="210" y="136" fill="#9aba2e" font-weight="700">Kernel<tspan fill="#3a3a2e">:</tspan><tspan fill="#d4ff3f" dx="12">Backend Engineer</tspan><tspan fill="#555"> (panic-mode)</tspan></text>
+    <text class="line l06" x="210" y="154" fill="#9aba2e" font-weight="700">Shell<tspan fill="#3a3a2e">:</tspan><tspan fill="#d4ff3f" dx="12">coffee</tspan><tspan fill="#555"> 4잔/day</tspan></text>
+
+    <!-- 구분선 -->
+    <text class="line l07" x="210" y="178" fill="#2a2a1e">──────────────────────────────────</text>
+
+    <!-- 언어/취미 -->
+    <text class="line l08" x="210" y="200" fill="#9aba2e" font-weight="700">Languages.Prog<tspan fill="#3a3a2e">:</tspan><tspan fill="#f4f4ef" dx="8">Python, Java, JS, C++</tspan></text>
+    <text class="line l09" x="210" y="218" fill="#9aba2e" font-weight="700">Languages.Real<tspan fill="#3a3a2e">:</tspan><tspan fill="#f4f4ef" dx="8">한국어, </tspan><tspan fill="#555">English(희망회로)</tspan></text>
+    <text class="line l10" x="210" y="236" fill="#9aba2e" font-weight="700">Hobbies<tspan fill="#3a3a2e">:</tspan><tspan fill="#f4f4ef" dx="8">졸라맨 게임 제작,</tspan><tspan fill="#555"> 디버깅 명상</tspan></text>
+
+    <!-- Contact -->
+    <text class="line l11" x="210" y="262" fill="#d4ff3f" font-weight="700">Contact <tspan fill="#2a2a1e">────────────────────────────</tspan></text>
+    <text class="line l12" x="210" y="282" fill="#9aba2e" font-weight="700">Email<tspan fill="#3a3a2e">:</tspan><tspan fill="#f4f4ef" dx="12">hojung@example.com</tspan></text>
+    <text class="line l13" x="210" y="300" fill="#9aba2e" font-weight="700">Blog<tspan fill="#3a3a2e">:</tspan><tspan fill="#f4f4ef" dx="12">velog.io/@hojung</tspan><tspan fill="#555"> (아마도)</tspan></text>
+
+    <!-- Stats -->
+    <text class="line l14" x="210" y="326" fill="#d4ff3f" font-weight="700">GitHub Stats <tspan fill="#2a2a1e">──────────────────────────</tspan></text>
+    <text class="line l15" x="210" y="346" font-weight="700">
+      <tspan fill="#9aba2e">Repos<tspan fill="#3a3a2e">:</tspan></tspan>
+      <tspan fill="#f4f4ef" dx="4">42</tspan>
+      <tspan dx="10" fill="#9aba2e">Commits<tspan fill="#3a3a2e">:</tspan></tspan>
+      <tspan fill="#f4f4ef" dx="4">1,337</tspan>
+      <tspan dx="10" fill="#9aba2e">Coffee<tspan fill="#3a3a2e">:</tspan></tspan>
+      <tspan fill="#d4ff3f" dx="4">∞</tspan>
+    </text>
+
+    <!-- 커서 -->
+    <text class="line l16 cursor" x="210" y="366" fill="#d4ff3f" font-weight="700">▋</text>
+
+    <!-- 컬러 팔레트 dots -->
+    <g class="line l17">
+      <rect x="210" y="366" width="11" height="7" fill="#14140f" stroke="#2a2a1e" stroke-width=".5"/>
+      <rect x="223" y="366" width="11" height="7" fill="#9aba2e"/>
+      <rect x="236" y="366" width="11" height="7" fill="#d4ff3f"/>
+      <rect x="249" y="366" width="11" height="7" fill="#f4f4ef"/>
+      <rect x="262" y="366" width="11" height="7" fill="#555"/>
+    </g>
+  </g>
+</svg>
