@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="820" height="440" viewBox="0 0 820 440" font-family="'JetBrains Mono','Fira Code',ui-monospace,monospace">
+  <rect width="820" height="440" rx="14" fill="#14140f"/>
+  <rect x="0.5" y="0.5" width="819" height="439" rx="14" fill="none" stroke="#2e2e22" stroke-width="1"/>
+
+  <!-- left: stickman ASCII -->
+  <g fill="#f4f4ef" font-size="15" font-weight="700">
+    <text x="120" y="80" text-anchor="middle">_____</text>
+    <text x="120" y="98" text-anchor="middle">/     \</text>
+    <text x="120" y="116" text-anchor="middle">|  o o |</text>
+    <text x="120" y="134" text-anchor="middle">|   ^  |</text>
+    <text x="120" y="152" text-anchor="middle">\ \_/ /</text>
+    <text x="120" y="170" text-anchor="middle">\___/</text>
+    <text x="120" y="198" text-anchor="middle" fill="#d4ff3f">_| |_</text>
+    <text x="120" y="216" text-anchor="middle" fill="#d4ff3f">/ /|.|\ \</text>
+    <text x="120" y="234" text-anchor="middle" fill="#d4ff3f">/ / |.| \ \</text>
+    <text x="120" y="252" text-anchor="middle">' |.| '</text>
+    <text x="120" y="270" text-anchor="middle">|.|</text>
+    <text x="120" y="288" text-anchor="middle">/   \</text>
+    <text x="120" y="306" text-anchor="middle">/     \</text>
+    <text x="120" y="324" text-anchor="middle">_/       \_</text>
+    <text x="120" y="378" text-anchor="middle" fill="#9aba2e" font-size="13">[ stickman.os ]</text>
+  </g>
+
+  <!-- right: neofetch info -->
+  <g font-size="15">
+    <text x="300" y="62"><tspan fill="#d4ff3f" font-weight="700">hojung</tspan><tspan fill="#8b8b7a">@</tspan><tspan fill="#d4ff3f" font-weight="700">github</tspan><tspan fill="#8b8b7a"> ───────────────────────────</tspan></text>
+
+    <g font-weight="700">
+      <text x="300" y="92"  fill="#9aba2e">OS<tspan fill="#8b8b7a" font-weight="400">:</tspan></text>
+      <text x="500" y="92"  fill="#f4f4ef">macOS, Ubuntu, 가끔 Windows(눈물)</text>
+      <text x="300" y="114" fill="#9aba2e">Uptime<tspan fill="#8b8b7a" font-weight="400">:</tspan></text>
+      <text x="500" y="114" fill="#f4f4ef">25 years, 인생 디버깅 중</text>
+      <text x="300" y="136" fill="#9aba2e">Host<tspan fill="#8b8b7a" font-weight="400">:</tspan></text>
+      <text x="500" y="136" fill="#f4f4ef">아직 취준생 Inc. (입사 대기)</text>
+      <text x="300" y="158" fill="#9aba2e">Kernel<tspan fill="#8b8b7a" font-weight="400">:</tspan></text>
+      <text x="500" y="158" fill="#f4f4ef">Backend Engineer (panic-mode)</text>
+      <text x="300" y="180" fill="#9aba2e">Shell<tspan fill="#8b8b7a" font-weight="400">:</tspan></text>
+      <text x="500" y="180" fill="#f4f4ef">커피 4잔 / day</text>
+    </g>
+
+    <g font-weight="700">
+      <text x="300" y="216" fill="#9aba2e">Languages.Programming<tspan fill="#8b8b7a" font-weight="400">:</tspan></text>
+      <text x="640" y="216" fill="#f4f4ef" text-anchor="end" transform="translate(140,0)">Python, Java, JS, C++</text>
+      <text x="300" y="238" fill="#9aba2e">Languages.Real<tspan fill="#8b8b7a" font-weight="400">:</tspan></text>
+      <text x="780" y="238" fill="#f4f4ef" text-anchor="end">한국어, English(toeic 만점 희망)</text>
+      <text x="300" y="260" fill="#9aba2e">Hobbies<tspan fill="#8b8b7a" font-weight="400">:</tspan></text>
+      <text x="780" y="260" fill="#f4f4ef" text-anchor="end">졸라맨 게임 만들기, 디버깅 명상</text>
+    </g>
+
+    <text x="300" y="296"><tspan fill="#9aba2e" font-weight="700">Contact</tspan><tspan fill="#8b8b7a"> ─────────────────────────────────</tspan></text>
+    <g font-weight="700">
+      <text x="300" y="324" fill="#9aba2e">Email<tspan fill="#8b8b7a" font-weight="400">:</tspan></text>
+      <text x="780" y="324" fill="#f4f4ef" text-anchor="end">hojung@example.com</text>
+      <text x="300" y="346" fill="#9aba2e">Blog<tspan fill="#8b8b7a" font-weight="400">:</tspan></text>
+      <text x="780" y="346" fill="#f4f4ef" text-anchor="end">velog.io/@hojung (아마도)</text>
+    </g>
+
+    <text x="300" y="382"><tspan fill="#9aba2e" font-weight="700">GitHub Stats</tspan><tspan fill="#8b8b7a"> ────────────────────────────</tspan></text>
+    <g font-weight="700">
+      <text x="300" y="410" fill="#9aba2e">Repos<tspan fill="#8b8b7a" font-weight="400">:</tspan> <tspan fill="#f4f4ef">42</tspan>   <tspan fill="#9aba2e">Commits<tspan fill="#8b8b7a" font-weight="400">:</tspan></tspan> <tspan fill="#f4f4ef">1,337</tspan>   <tspan fill="#9aba2e">Coffee<tspan fill="#8b8b7a" font-weight="400">:</tspan></tspan> <tspan fill="#d4ff3f">∞</tspan></text>
+    </g>
+  </g>
+
+  <!-- color dots like neofetch -->
+  <g>
+    <rect x="300" y="424" width="14" height="9" fill="#14140f" stroke="#2e2e22"/>
+    <rect x="316" y="424" width="14" height="9" fill="#9aba2e"/>
+    <rect x="332" y="424" width="14" height="9" fill="#d4ff3f"/>
+    <rect x="348" y="424" width="14" height="9" fill="#f4f4ef"/>
+    <rect x="364" y="424" width="14" height="9" fill="#8b8b7a"/>
+  </g>
+</svg>
